@@ -1,3 +1,3 @@
-2025/06/15-19:00:45.797 444c Reusing MANIFEST C:\Projects\scrapper\tmp\Default\Local Storage\leveldb/MANIFEST-000001
-2025/06/15-19:00:45.804 444c Recovering log #4
-2025/06/15-19:00:45.807 444c Reusing old log C:\Projects\scrapper\tmp\Default\Local Storage\leveldb/000004.log 
+2025/06/26-02:05:59.325 252c Reusing MANIFEST C:\scapperJS\scraper\tmp\Default\Local Storage\leveldb/MANIFEST-000001
+2025/06/26-02:05:59.329 252c Recovering log #3
+2025/06/26-02:05:59.330 252c Reusing old log C:\scapperJS\scraper\tmp\Default\Local Storage\leveldb/000003.log 

@@ -13,7 +13,7 @@ async function test() {
             height: 840
         });
 
-        await page.goto('https://www.lidl.hu/l/hu/ujsag/akcios-ujsag-24-het-2025/view/flyer/page/1?lf=HHZ');
+        await page.goto('https://www.lidl.hu/l/hu/ujsag/akcios-ujsag-26-het-2025/view/flyer/page/1?lf=HHZ');
 
 
         await page.waitForNetworkIdle(2000);

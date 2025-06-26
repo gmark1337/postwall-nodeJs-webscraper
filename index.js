@@ -14,6 +14,8 @@ async function getNavigationLink(page){
     
     await page.goto("https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d");
 
+    acceptCookie(page);
+
     const valid = await page.evaluate(() => {
         const flyers = document.querySelectorAll('.subcategory');
         const element = flyers[0];
@@ -37,6 +39,7 @@ async function getNavigationLink(page){
     if(previousURL === null){
         console.log("No previous URL found, saving URL..."),
         await writeCurrentDateJson(valid.URL);
+        clearFolder('./images');
         return {isURLSame: false, url:valid.url};
     }
 
@@ -90,6 +93,7 @@ async function fetchImages(page){
     try {
         await page.waitForSelector(waitRightSelector, { visible: true });
         await page.click(waitRightSelector);
+        await sleep(100);
         pageIndex++;
     } catch (err) {
         console.log('No more pages!')
@@ -142,12 +146,46 @@ async function readJsonData(file){
     }
 }
 
+async function clearFolder(folderPath){
+    try {
+        const files = await fs1.readdir(folderPath);
+
+        for(const file of files){
+            const filePath = path.join(folderPath, file);
+            const stat = await fs1.lstat(filePath);
+
+            if(stat.isFile()){
+                await fs1.unlink(filePath);
+            }
+        }
+        
+        console.log('Folder succsefully cleared.');
+    }
+    catch(err){
+        console.error('Error clearing folder:', err);
+    }
+}
+
+async function acceptCookie(page){
+    try {
+        await page.waitForSelector('#onetrust-banner-sdk > div > div');
+        await page.click('#onetrust-reject-all-handler');
+        console.log('Cookies denied');
+    }catch(err){
+        console.log('No cookie banner found!');
+    }
+}
+
+async function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 
 (async () => {
 
     const browser = await puppeteer.launch({
-        headless : true,
+        headless : false,
         defaultViewport : false,
         userDataDir: './tmp'
     });
@@ -160,6 +198,7 @@ async function readJsonData(file){
     });
 
     const {isURLSame, url} = await getNavigationLink(page);
+
     if(!isURLSame){
     const images = await fetchImages(page);
 

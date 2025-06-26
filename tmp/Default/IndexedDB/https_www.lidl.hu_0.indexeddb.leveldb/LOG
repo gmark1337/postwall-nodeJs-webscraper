@@ -1,3 +1,3 @@
-2025/06/15-19:05:01.025 65b0 Reusing MANIFEST C:\Projects\scrapper\tmp\Default\IndexedDB\https_www.lidl.hu_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/15-19:05:01.026 65b0 Recovering log #3
-2025/06/15-19:05:01.031 65b0 Reusing old log C:\Projects\scrapper\tmp\Default\IndexedDB\https_www.lidl.hu_0.indexeddb.leveldb/000003.log 
+2025/06/26-02:07:44.396 614 Reusing MANIFEST C:\scapperJS\scraper\tmp\Default\IndexedDB\https_www.lidl.hu_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/26-02:07:44.396 614 Recovering log #3
+2025/06/26-02:07:44.396 614 Reusing old log C:\scapperJS\scraper\tmp\Default\IndexedDB\https_www.lidl.hu_0.indexeddb.leveldb/000003.log 

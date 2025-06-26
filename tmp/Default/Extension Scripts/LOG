@@ -1,3 +1,2 @@
-2025/06/07-12:27:05.379 2080 Reusing MANIFEST C:\Projects\scrapper\tmp\Default\Extension Scripts/MANIFEST-000001
-2025/06/07-12:27:05.379 2080 Recovering log #3
-2025/06/07-12:27:05.380 2080 Reusing old log C:\Projects\scrapper\tmp\Default\Extension Scripts/000003.log 
+2025/06/26-01:49:01.869 5100 Creating DB C:\scapperJS\scraper\tmp\Default\Extension Scripts since it was missing.
+2025/06/26-01:49:01.883 5100 Reusing MANIFEST C:\scapperJS\scraper\tmp\Default\Extension Scripts/MANIFEST-000001
