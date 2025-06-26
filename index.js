@@ -39,15 +39,16 @@ async function getNavigationLink(page){
         console.log("No previous URL found, saving URL..."),
         await writeCurrentDateJson(valid.URL);
         await clearFolder('./images');
-        return {isURLSame: false, url:valid.url};
+        return {isURLSame: false, url:valid.URL};
     }
 
-    if( previousURL === valid.URL){
+    if(previousURL === valid.URL){
         console.log("URL hasn't changed , skipping...");
         return {isURLSame: true, url:previousURL};
     }
     
-    //return {isURLSame: false, url: valid.url};
+    await writeCurrentDateJson(valid.URL);
+    return {isURLSame: false, url: valid.URL};
 
 }
 
@@ -133,7 +134,7 @@ async function downloadImage(url, filename){
 async function writeCurrentDateJson(date){
     const jsonData = JSON.stringify(date, null, 2);
 
-    fs.writeFile('dates.json', jsonData, (err) => {
+    await fs1.writeFile('dates.json', jsonData, (err) => {
         if(err){
             console.log('Error writing file', err.message);
         }
@@ -171,7 +172,7 @@ async function clearFolder(folderPath){
             }
         }
         
-        console.log('Folder succsefully cleared.');
+        console.log('Folder successfully cleared.');
     }
     catch(err){
         console.error('Error clearing folder:', err);
