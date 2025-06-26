@@ -11,12 +11,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-async function getNavigationLink(page){
+async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder){
     
-    await page.goto("https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d");
+    await page.goto(websiteLink);
 
-    const valid = await page.evaluate(() => {
-        const flyers = document.querySelectorAll('.subcategory');
+    const valid = await page.evaluate((sel) => {
+        const flyers = document.querySelectorAll(sel);
         const element = flyers[0];
 
         if(!element){
@@ -31,14 +31,14 @@ async function getNavigationLink(page){
         };
 
         
-    });
+    }, selector);
 
-    const previousURL = await readJsonData('dates.json');
+    const previousURL = await readJsonData(jsonFile);
 
     if(previousURL === null){
         console.log("No previous URL found, saving URL..."),
-        await writeCurrentDateJson(valid.URL);
-        await clearFolder('./images');
+        await writeCurrentDateJson(valid.URL, jsonFile);
+        await clearFolder(imageFolder);
         return {isURLSame: false, url:valid.URL};
     }
 
@@ -47,21 +47,17 @@ async function getNavigationLink(page){
         return {isURLSame: true, url:previousURL};
     }
     
-    await writeCurrentDateJson(valid.URL);
+    await writeCurrentDateJson(valid.URL,'lidlDate.json');
     return {isURLSame: false, url: valid.URL};
 
 }
 
-async function fetchImages(page){
-
-    const waitRightSelector = '#root > main > section > div.content_navigation--right';
-    const currentImage = 'li.page.page--current.page--current-1';
-    const {url:relativeURL} = await getNavigationLink(page);
+async function fetchImages(page,relativeURL,waitRightSelector, currentImage){
 
     if (relativeURL === 'NULL'){
         console.log("URL not found!");
         await browser.close();
-        return;
+        return [];
     }
     await page.goto(relativeURL, {
         waitUntil: 'networkidle0'
@@ -70,9 +66,6 @@ async function fetchImages(page){
     await denyCookie(page);
     await sleep(400);
 
-    
-
-   
 
     const imagesURL = [];
     let pageIndex = 1;
@@ -117,13 +110,13 @@ console.log('Exiting the loop');
     return imagesURL;
 }
 
-async function downloadImage(url, filename){
+async function downloadImage(url, filename, imageFolder){
     const res = await fetch(url);
     if(!res.ok){
         throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
     }
 
-    const dest = fs.createWriteStream(path.join(__dirname, './images',filename));
+    const dest = fs.createWriteStream(path.join(__dirname, imageFolder,filename));
     await new Promise((resolve, reject) => {
         res.body.pipe(dest);
         res.body.on('error',reject);
@@ -131,10 +124,10 @@ async function downloadImage(url, filename){
     });
 }
 
-async function writeCurrentDateJson(date){
+async function writeCurrentDateJson(date,fileName){
     const jsonData = JSON.stringify(date, null, 2);
 
-    await fs1.writeFile('dates.json', jsonData, (err) => {
+    await fs1.writeFile(fileName, jsonData, (err) => {
         if(err){
             console.log('Error writing file', err.message);
         }
@@ -198,6 +191,16 @@ async function sleep(ms){
 
 (async () => {
 
+    //lidl
+    const lidlURL = "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d";
+    const lidlSelector = '.subcategory';
+    const lidlJson = 'dates.json';
+    const lidlImages = './lidlImages';
+    const waitRightSelector = '#root > main > section > div.content_navigation--right';
+    const currentImage = 'li.page.page--current.page--current-1';
+
+
+
     const browser = await puppeteer.launch({
         headless : true,
         defaultViewport : false,
@@ -211,16 +214,16 @@ async function sleep(ms){
         height: 840
     });
 
-    const {isURLSame, url} = await getNavigationLink(page);
+    const {isURLSame, url} = await getNavigationLink(page,lidlURL, lidlSelector, lidlJson,lidlImages);
 
 
 
     if(!isURLSame){
 
-    const images = await fetchImages(page);
+    const images = await fetchImages(page, url,waitRightSelector, currentImage);
 
     
-    const outputDir = path.join(__dirname, './images');
+    const outputDir = path.join(__dirname, lidlImages);
     if(!fs.existsSync(outputDir)){
         fs.mkdirSync(outputDir);
     }
@@ -232,7 +235,7 @@ async function sleep(ms){
         const filename = `page-${pageIndex}.jpg`;
         console.log(`Downloading ${filename}...`);
         try{
-            await downloadImage(url, filename);
+            await downloadImage(url, filename,lidlImages);
         }catch(err){
             console.error(`Failed to download page ${pageIndex}:`, err.message);
         }
