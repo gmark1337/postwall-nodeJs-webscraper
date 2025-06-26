@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { json } from 'stream/consumers';
 import fs1 from 'fs/promises';
+import { brotliCompress } from 'zlib';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -13,8 +14,6 @@ const __dirname = dirname(__filename);
 async function getNavigationLink(page){
     
     await page.goto("https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d");
-
-    acceptCookie(page);
 
     const valid = await page.evaluate(() => {
         const flyers = document.querySelectorAll('.subcategory');
@@ -39,7 +38,7 @@ async function getNavigationLink(page){
     if(previousURL === null){
         console.log("No previous URL found, saving URL..."),
         await writeCurrentDateJson(valid.URL);
-        clearFolder('./images');
+        await clearFolder('./images');
         return {isURLSame: false, url:valid.url};
     }
 
@@ -66,15 +65,22 @@ async function fetchImages(page){
     await page.goto(relativeURL, {
         waitUntil: 'networkidle0'
     });
+    await sleep(400);
+    await denyCookie(page);
+    await sleep(400);
+
+    
 
    
 
     const imagesURL = [];
     let pageIndex = 1;
 
+    console.log('Starting paging loop...');
     while (true) {
+        
         await page.waitForSelector(currentImage);
-
+        console.log(`Currently on page ${pageIndex}`)
         const result = await page.evaluate((selector) => {
             const element = document.querySelector(selector);
             if(!element){
@@ -90,17 +96,23 @@ async function fetchImages(page){
             console.log(`Image not found on ${pageIndex}. page.`);
         }
         
-    try {
-        await page.waitForSelector(waitRightSelector, { visible: true });
-        await page.click(waitRightSelector);
-        await sleep(100);
-        pageIndex++;
-    } catch (err) {
-        console.log('No more pages!')
-        break;
-    }
+        if(!await page.$(waitRightSelector)){
+            console.log('No more pages!');
+            break;
+        }
 
+        try {
+            await page.waitForSelector(waitRightSelector, { visible: true });
+            await page.click(waitRightSelector);
+            await sleep(100);
+            pageIndex++;
+        } catch (err) {
+            console.log('No more pages!', err.message)
+            break;
+        
+    }
 }
+console.log('Exiting the loop');
     return imagesURL;
 }
 
@@ -166,7 +178,8 @@ async function clearFolder(folderPath){
     }
 }
 
-async function acceptCookie(page){
+//we hate cookies >:(
+async function denyCookie(page){
     try {
         await page.waitForSelector('#onetrust-banner-sdk > div > div');
         await page.click('#onetrust-reject-all-handler');
@@ -185,9 +198,9 @@ async function sleep(ms){
 (async () => {
 
     const browser = await puppeteer.launch({
-        headless : false,
+        headless : true,
         defaultViewport : false,
-        userDataDir: './tmp'
+        //userDataDir: './tmp'
     });
 
      
@@ -199,9 +212,13 @@ async function sleep(ms){
 
     const {isURLSame, url} = await getNavigationLink(page);
 
+
+
     if(!isURLSame){
+
     const images = await fetchImages(page);
 
+    
     const outputDir = path.join(__dirname, './images');
     if(!fs.existsSync(outputDir)){
         fs.mkdirSync(outputDir);
