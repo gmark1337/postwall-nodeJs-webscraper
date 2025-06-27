@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder){
+export async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder){
     
     await page.goto(websiteLink);
 
@@ -47,12 +47,12 @@ async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder)
         return {isURLSame: true, url:previousURL};
     }
     
-    await writeCurrentDateJson(valid.URL,'lidlDate.json');
+    await writeCurrentDateJson(valid.URL,jsonFile);
     return {isURLSame: false, url: valid.URL};
 
 }
 
-async function fetchImages(page,relativeURL,waitRightSelector, currentImage){
+export async function fetchImages(page,relativeURL,waitRightSelector, currentImage){
 
     if (relativeURL === 'NULL'){
         console.log("URL not found!");
@@ -124,7 +124,23 @@ async function downloadImage(url, filename, imageFolder){
     });
 }
 
-async function writeCurrentDateJson(date,fileName){
+export async function downloadOutputImages(images, outputDir){
+    
+    for(const {pageIndex, url} of images){
+        if(!url || url === 'URL not found') {
+            continue;
+        }
+        const filename = `page-${pageIndex}.jpg`;
+        console.log(`Downloading ${filename}...`);
+        try{
+            await downloadImage(url, filename,outputDir);
+        }catch(err){
+            console.error(`Failed to download page ${pageIndex}:`, err.message);
+        }
+    }
+}
+
+ async function writeCurrentDateJson(date,fileName){
     const jsonData = JSON.stringify(date, null, 2);
 
     await fs1.writeFile(fileName, jsonData, (err) => {
@@ -137,7 +153,7 @@ async function writeCurrentDateJson(date,fileName){
     })
 }
 
-async function readJsonData(file){
+ async function readJsonData(file){
     try {
         const jsonString = await fs1.readFile(file, 'utf-8');
         if(!jsonString.trim()){
@@ -152,7 +168,7 @@ async function readJsonData(file){
     }
 }
 
-async function clearFolder(folderPath){
+ async function clearFolder(folderPath){
     try {
         const files = await fs1.readdir(folderPath);
 
@@ -173,7 +189,7 @@ async function clearFolder(folderPath){
 }
 
 //we hate cookies >:(
-async function denyCookie(page){
+ async function denyCookie(page){
     try {
         await page.waitForSelector('#onetrust-banner-sdk > div > div');
         await page.click('#onetrust-reject-all-handler');
@@ -183,67 +199,6 @@ async function denyCookie(page){
     }
 }
 
-async function sleep(ms){
+ async function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
-
-(async () => {
-
-    //lidl
-    const lidlURL = "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d";
-    const lidlSelector = '.subcategory';
-    const lidlJson = 'dates.json';
-    const lidlImages = './lidlImages';
-    const waitRightSelector = '#root > main > section > div.content_navigation--right';
-    const currentImage = 'li.page.page--current.page--current-1';
-
-
-
-    const browser = await puppeteer.launch({
-        headless : true,
-        defaultViewport : false,
-        //userDataDir: './tmp'
-    });
-
-     
-    const page = await browser.newPage();
-    await page.setViewport({
-        width: 610,
-        height: 840
-    });
-
-    const {isURLSame, url} = await getNavigationLink(page,lidlURL, lidlSelector, lidlJson,lidlImages);
-
-
-
-    if(!isURLSame){
-
-    const images = await fetchImages(page, url,waitRightSelector, currentImage);
-
-    
-    const outputDir = path.join(__dirname, lidlImages);
-    if(!fs.existsSync(outputDir)){
-        fs.mkdirSync(outputDir);
-    }
-
-    for(const {pageIndex, url} of images){
-        if(!url || url === 'URL not found') {
-            continue;
-        }
-        const filename = `page-${pageIndex}.jpg`;
-        console.log(`Downloading ${filename}...`);
-        try{
-            await downloadImage(url, filename,lidlImages);
-        }catch(err){
-            console.error(`Failed to download page ${pageIndex}:`, err.message);
-        }
-    }
-
-    console.log('All download finished!');
-    }else{
-        console.log('The images are already downloaded!');
-    }
-    await browser.close();
-})();
