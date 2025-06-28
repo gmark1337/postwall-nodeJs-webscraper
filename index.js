@@ -11,9 +11,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-export async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder){
+export async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder, cookieOptional = false, waitForCookieDenySelector = null, denyCookieSelector = null){
     
     await page.goto(websiteLink);
+
+    if(cookieOptional == true){
+        console.log(cookieOptional);
+        console.log(waitForCookieDenySelector);
+        console.log(denyCookieSelector);
+        denyCookie(waitForCookieDenySelector, denyCookieSelector);
+    }
 
     const valid = await page.evaluate((sel) => {
         const flyers = document.querySelectorAll(sel);
@@ -52,7 +59,7 @@ export async function getNavigationLink(page,websiteLink,selector,jsonFile,image
 
 }
 
-export async function fetchImages(page,relativeURL,waitRightSelector, currentImage){
+export async function fetchImages(page,relativeURL,waitRightSelector, currentImage, waitForCookieDenySelector, denyCookieSelector){
 
     if (relativeURL === 'NULL'){
         console.log("URL not found!");
@@ -63,7 +70,7 @@ export async function fetchImages(page,relativeURL,waitRightSelector, currentIma
         waitUntil: 'networkidle0'
     });
     await sleep(400);
-    await denyCookie(page);
+    await denyCookie(page, waitForCookieDenySelector, denyCookieSelector);
     await sleep(400);
 
 
@@ -138,6 +145,7 @@ export async function downloadOutputImages(images, outputDir){
             console.error(`Failed to download page ${pageIndex}:`, err.message);
         }
     }
+        console.log('All downloads finished!')
 }
 
  async function writeCurrentDateJson(date,fileName){
@@ -189,15 +197,16 @@ export async function downloadOutputImages(images, outputDir){
 }
 
 //we hate cookies >:(
- async function denyCookie(page){
-    try {
-        await page.waitForSelector('#onetrust-banner-sdk > div > div');
-        await page.click('#onetrust-reject-all-handler');
-        console.log('Cookies denied');
-    }catch(err){
-        console.log('No cookie banner found!');
+ export async function denyCookie(page, waitForCookieDenySelector, denyCookieSelector){
+   try {
+     await page.waitForSelector(waitForCookieDenySelector);
+        await page.click(denyCookieSelector);
+       console.log('Cookies denied');
+   }catch(err){
+      console.log('No cookie banner found!');
     }
 }
+
 
  async function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));

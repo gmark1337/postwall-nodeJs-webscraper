@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 (async () => {
-
+    console.log("Started scraping lidl website....")
     //lidl
     const lidlURL = "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d";
     const lidlSelector = '.subcategory';
@@ -17,6 +17,9 @@ const __dirname = dirname(__filename);
     const lidlImages = './lidlImages';
     const waitRightSelector = '#root > main > section > div.content_navigation--right';
     const currentImage = 'li.page.page--current.page--current-1';
+
+    const waitForCookieDenySelector = '#onetrust-banner-sdk > div > div';
+    const denyCookieSelector = '#onetrust-reject-all-handler';
 
     const browser = await puppeteer.launch({
         headless : true,
@@ -37,7 +40,7 @@ const __dirname = dirname(__filename);
 
     if(!isURLSame){
 
-    const images = await fetchImages(page, url,waitRightSelector, currentImage);
+    const images = await fetchImages(page, url,waitRightSelector, currentImage,waitForCookieDenySelector, denyCookieSelector);
 
 
     const outputDir = path.join(__dirname, lidlImages);
@@ -45,10 +48,10 @@ const __dirname = dirname(__filename);
         fs.mkdirSync(outputDir);
     }
     downloadOutputImages(images, lidlImages);
-
-    console.log('All downloads finished!');
+;
     }else{
         console.log('The images are already downloaded!');
     }
+    console.log("Finished scraping lidl. Closing browser....");
     await browser.close();
 })();
