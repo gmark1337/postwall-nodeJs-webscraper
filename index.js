@@ -59,7 +59,7 @@ export async function getNavigationLink(page,websiteLink,selector,jsonFile,image
 
 }
 
-export async function fetchImages(page,relativeURL,waitRightSelector, currentImage, waitForCookieDenySelector, denyCookieSelector){
+export async function fetchImages(page,relativeURL,waitRightSelector, currentImage, waitForCookieDenySelector=null, denyCookieSelector=null){
 
     if (relativeURL === 'NULL'){
         console.log("URL not found!");
@@ -208,6 +208,6 @@ export async function downloadOutputImages(images, outputDir){
 }
 
 
- async function sleep(ms){
+export async function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
