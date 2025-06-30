@@ -161,7 +161,7 @@ export async function downloadOutputImages(images, outputDir){
     })
 }
 
- async function readJsonData(file){
+ export async function readJsonData(file){
     try {
         const jsonString = await fs1.readFile(file, 'utf-8');
         if(!jsonString.trim()){
