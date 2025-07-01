@@ -59,18 +59,25 @@ export async function getNavigationLink(page,websiteLink,selector,jsonFile,image
 
 }
 
-export async function fetchImages(page,relativeURL,waitRightSelector, currentImage, waitForCookieDenySelector=null, denyCookieSelector=null){
+export async function fetchImages(pageOrFrame,relativeURL,waitRightSelector, currentImage, waitForCookieDenySelector=null, denyCookieSelector=null){
 
-    if (relativeURL === 'NULL'){
-        console.log("URL not found!");
-        await browser.close();
-        return [];
+    const isPage = 'goto' in pageOrFrame;
+
+    if (relativeURL === 'NULL') {
+        console.log("URL not found! Skipping navigation.");
+    } else if (isPage) {
+        try {
+            await pageOrFrame.goto(relativeURL, { waitUntil: 'networkidle0' });
+        } catch (err) {
+            console.error("Failed to navigate to URL:", err.message);
+            return [];
+        }
+    } else {
+        console.warn("Skipping .goto(): not a Page object.");
     }
-    await page.goto(relativeURL, {
-        waitUntil: 'networkidle0'
-    });
+
     await sleep(400);
-    await denyCookie(page, waitForCookieDenySelector, denyCookieSelector);
+    await denyCookie(pageOrFrame, waitForCookieDenySelector, denyCookieSelector);
     await sleep(400);
 
 
@@ -80,9 +87,9 @@ export async function fetchImages(page,relativeURL,waitRightSelector, currentIma
     console.log('Starting paging loop...');
     while (true) {
         
-        await page.waitForSelector(currentImage);
+        await pageOrFrame.waitForSelector(currentImage);
         console.log(`Currently on page ${pageIndex}`)
-        const result = await page.evaluate((selector) => {
+        const result = await pageOrFrame.evaluate((selector) => {
             const element = document.querySelector(selector);
             if(!element){
                 return null;
@@ -97,15 +104,15 @@ export async function fetchImages(page,relativeURL,waitRightSelector, currentIma
             console.log(`Image not found on ${pageIndex}. page.`);
         }
         
-        if(!await page.$(waitRightSelector)){
+        if(!await pageOrFrame.$(waitRightSelector)){
             console.log('No more pages!');
             break;
         }
 
         try {
-            await page.waitForSelector(waitRightSelector, { visible: true });
-            await page.click(waitRightSelector);
-            await sleep(100);
+            await pageOrFrame.waitForSelector(waitRightSelector, { visible: true });
+            await pageOrFrame.click(waitRightSelector);
+            await sleep(100+ Math.random() * 1000);
             pageIndex++;
         } catch (err) {
             console.log('No more pages!', err.message)
