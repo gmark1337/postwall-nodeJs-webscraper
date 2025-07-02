@@ -42,6 +42,9 @@ export async function getNavigationLink(page,websiteLink,selector,jsonFile,image
 
     const previousURL = await readJsonData(jsonFile);
 
+    console.log(previousURL);
+    console.log(valid.URL);
+
     if(previousURL === null){
         console.log("No previous URL found, saving URL..."),
         await writeCurrentDateJson(valid.URL, jsonFile);
@@ -112,7 +115,7 @@ export async function fetchImages(pageOrFrame,relativeURL,waitRightSelector, cur
         try {
             await pageOrFrame.waitForSelector(waitRightSelector, { visible: true });
             await pageOrFrame.click(waitRightSelector);
-            await sleep(100+ Math.random() * 1000);
+            await sleep(100);
             pageIndex++;
         } catch (err) {
             console.log('No more pages!', err.message)

@@ -3,7 +3,8 @@
 > ⚠️ **Disclaimer:**  
 > This project is still a work in progress and requires a lot of fixing!
 
-This is a simple image scraper built with **Node.js**, using **Puppeteer** to control a headless browser and **node-fetch** for HTTP requests.
+This is a simple image scraper built with **Node.js**, using **Puppeteer** to control a headless browser and **node-fetch** for HTTP requests.\
+Currently, it fetches supermarket chains like **Spar**, **Penny**, **Lidl** but in the future will be added more!
 
 ## 🚀 Features
 
@@ -16,6 +17,8 @@ This is a simple image scraper built with **Node.js**, using **Puppeteer** to co
 
 - [Node.js](https://nodejs.org/)
 - [Puppeteer](https://pptr.dev/)
+- [Puppeteer-extra](https://www.npmjs.com/package/puppeteer-extra)
+- [Puppeteer-extra-plugin-stealth](https://www.npmjs.com/package/puppeteer-extra-plugin-stealth)
 - [node-fetch](https://www.npmjs.com/package/node-fetch)
 
 > **Developer note:**\

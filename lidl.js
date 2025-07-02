@@ -8,6 +8,11 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+
+//TODO
+// 
+//Better quality pictures?
+//Optimize the clicking mechanism?(Save 2 at a time not one by one => see {'spar.js'})
 (async () => {
     console.log("Started scraping lidl website....")
     //lidl
@@ -47,7 +52,8 @@ const __dirname = dirname(__filename);
     if(!fs.existsSync(outputDir)){
         fs.mkdirSync(outputDir);
     }
-    downloadOutputImages(images, lidlImages);
+    
+    await downloadOutputImages(images, lidlImages);
 ;
     }else{
         console.log('The images are already downloaded!');
