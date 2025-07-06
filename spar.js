@@ -40,7 +40,7 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
 
 
 
-(async () => {
+export async function main(){
 
     const sparUrl = 'https://www.spar.hu/ajanlatok';
     const sparSelector = '#filter-5aa56c5e30 > main > div > div.flyer-container.flyer-filter.ipaper-container > section:nth-child(4) > div > div.flyer-teaser__wrapper.ipaper-teaser__wrapper.flyer-teaser__wrapper--grouped';
@@ -67,6 +67,8 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
     })
     const base = 'https://www.spar.hu';
     const{isURLSame, url} = await getNavigationLink(page, sparUrl, sparSelector, sparJson, sparImages);
+
+    const actualDate = url.split('/')[3];
     const fullURL = new URL(url, base).href;
     console.log(isURLSame);
     if(!isURLSame){
@@ -80,11 +82,13 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
 
         await sleep(4000);
 
-        const allImagesURL = [];
+        let allImagesURL = [];
 
 
         while(true){
-        
+
+            
+            
             const spreadSelector = '[id^=spread-]';
             const imagesURL = await frame.evaluate((selector) => {
                 const spreads = Array.from(document.querySelectorAll(selector));
@@ -93,27 +97,46 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
                     return Array.from(imgs)
                     .map(img => img.src)
                     .filter(src => src);
-                })
-                .filter(src => src !== null);
+                }).filter(src => src !== null);
             }, spreadSelector);
+
+            await sleep(100);
+            console.log("Found images:", imagesURL);
             console.log("Success saving the images");
-            if(imagesURL.length ===0){
-                console.log("No more images found. Stopping....");
-                break;
-            }
             allImagesURL.push(imagesURL);
 
             const reachedEnd = await clickNextNumberNthTimes(frame, waitRightSelector, 5);
+            
             if(reachedEnd){
                 console.log("No more pages to click.");
+                const finalImages = await frame.evaluate((selector) => {
+                const spreads = Array.from(document.querySelectorAll(selector));
+                return spreads.flatMap(div => {
+                    const imgs = div.querySelectorAll('img');
+                    return Array.from(imgs)
+                        .map(img => img.src)
+                        .filter(src => src);
+                    }).filter(src => src !== null);
+                }, spreadSelector);
+                console.log("Final images found:", finalImages);
+                allImagesURL.push(finalImages);
                 break;
             }
+            
+            
         };
         const imagesFlated = allImagesURL.flat();
         const imagesWithIndex = imagesFlated.map((url, index) => ({
             pageIndex: index + 1,
             url
         }));
+
+        imagesWithIndex.forEach(x => console.log(x));
+
+        const jsonImages = {
+            actualDate: actualDate,
+            pages: imagesWithIndex
+        };
 
         /* for(let i = 0; i < imagesFlated.length; i++){
                 const url = imagesFlated[i];
@@ -137,11 +160,14 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
                 fs.mkdirSync(outputDir);
             }
         //await downloadOutputImages(imagesWithIndex, sparImages);
-        await fs.writeFileSync('sparImages.json', JSON.stringify(imagesWithIndex, null, 2), 'utf-8');
+        await fs.writeFileSync('./sparImages/sparImages.json', JSON.stringify(jsonImages, null, 2), 'utf-8');
 
     } else{
         console.log("The images are already downloaded!")
     }
 
     await browser.close(); 
-})();
+};
+
+
+await main();
