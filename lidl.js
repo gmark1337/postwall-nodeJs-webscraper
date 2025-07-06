@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
 import fs from 'fs';
+import { json } from 'stream/consumers';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,7 +14,7 @@ const __dirname = dirname(__filename);
 // 
 //Better quality pictures?
 //Optimize the clicking mechanism?(Save 2 at a time not one by one => see {'spar.js'})
-(async () => {
+export async function main () {
     console.log("Started scraping lidl website....")
     //lidl
     const lidlURL = "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d";
@@ -41,6 +42,10 @@ const __dirname = dirname(__filename);
 
     const {isURLSame, url} = await getNavigationLink(page,lidlURL, lidlSelector, lidlJson,lidlImages);
 
+    const actualDate = url.split("/")[6];
+    console.log(actualDate);
+
+    const jsonImages = [];
 
 
     if(!isURLSame){
@@ -53,11 +58,24 @@ const __dirname = dirname(__filename);
         fs.mkdirSync(outputDir);
     }
     
-    await downloadOutputImages(images, lidlImages);
+    //await downloadOutputImages(images, lidlImages);
+    
+    const imagesWithDate = {
+        actualDate: actualDate,
+        pages: images
+    };
+    //jsonImages.push(JSON.stringify(images));
+    jsonImages.push(imagesWithDate);
+    await fs.writeFileSync('./lidlImages/lidlImages.json', JSON.stringify(imagesWithDate, null, 2), 'utf-8');
+
+    //jsonImages.forEach(x => console.log(x));
 ;
     }else{
         console.log('The images are already downloaded!');
     }
     console.log("Finished scraping lidl. Closing browser....");
     await browser.close();
-})();
+
+}
+
+//await main();

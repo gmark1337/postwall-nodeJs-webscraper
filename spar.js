@@ -136,7 +136,8 @@ async function clickNextNumberNthTimes(frame, selector, numberOfClicks){
             if(!fs.existsSync(outputDir)){
                 fs.mkdirSync(outputDir);
             }
-        await downloadOutputImages(imagesWithIndex, sparImages);
+        //await downloadOutputImages(imagesWithIndex, sparImages);
+        await fs.writeFileSync('sparImages.json', JSON.stringify(imagesWithIndex, null, 2), 'utf-8');
 
     } else{
         console.log("The images are already downloaded!")
