@@ -87,8 +87,6 @@ export async function main(){
 
         while(true){
 
-            
-            
             const spreadSelector = '[id^=spread-]';
             const imagesURL = await frame.evaluate((selector) => {
                 const spreads = Array.from(document.querySelectorAll(selector));
@@ -101,7 +99,7 @@ export async function main(){
             }, spreadSelector);
 
             await sleep(100);
-            console.log("Found images:", imagesURL);
+            //console.log("Found images:", imagesURL);
             console.log("Success saving the images");
             allImagesURL.push(imagesURL);
 
@@ -118,7 +116,7 @@ export async function main(){
                         .filter(src => src);
                     }).filter(src => src !== null);
                 }, spreadSelector);
-                console.log("Final images found:", finalImages);
+                //console.log("Final images found:", finalImages);
                 allImagesURL.push(finalImages);
                 break;
             }
@@ -170,4 +168,4 @@ export async function main(){
 };
 
 
-await main();
+//await main();

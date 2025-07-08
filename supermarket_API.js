@@ -7,6 +7,12 @@ import sparImages from './sparImages/sparImages.json' with {type: 'json'};
 const app = express();
 const port = 3000;
 
+//Lidl == 1
+//Spar == 2
+//Penny == 3 TODO
+
+
+
 app.get('/api/data/', async (req, res) => {
     const supermarketId = req.query.supermarketId;
     try {
@@ -17,7 +23,7 @@ app.get('/api/data/', async (req, res) => {
         }else if(supermarketId === '2') {
             await SparMain();
             res.json({sparImages});
-        }
+        }//TODO
         else{
             res.status(400).json({error: "Unknown supermarketId"});
         }
