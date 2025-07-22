@@ -1,9 +1,11 @@
 import express from 'express';
-import lidlImages from './lidlImages/lidlImages.json' with {type: 'json'};
+//import lidlImages from './lidlImages/lidlImages.json' with {type: 'json'};
 import {main as LidlMain} from './lidl.js';
 //---------------------------------------------
 import {main as SparMain} from './spar.js';
-import sparImages from './sparImages/sparImages.json' with {type: 'json'};
+//import sparImages from './sparImages/sparImages.json' with {type: 'json'};
+//---------------------------------------------
+import { readJsonData } from './index.js';
 const app = express();
 const port = 3000;
 
@@ -18,10 +20,15 @@ app.get('/api/data/', async (req, res) => {
     try {
         if(supermarketId === '1'){
             await LidlMain();
+            
+            //const lidlImages = await readJsonData('./lidlImages/lidlImages.json');
+            console.log("Sending lidl images...", lidlImages)
             res.json({lidlImages});
         
         }else if(supermarketId === '2') {
             await SparMain();
+            //const sparImages = await readJsonData('./sparImages/sparImages.json');
+            console.log("Sending spar images...", sparImages)
             res.json({sparImages});
         }//TODO
         else{
