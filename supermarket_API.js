@@ -5,7 +5,13 @@ import {main as LidlMain} from './lidl.js';
 import {main as SparMain} from './spar.js';
 //import sparImages from './sparImages/sparImages.json' with {type: 'json'};
 //---------------------------------------------
-import { readJsonData } from './index.js';
+import { readJsonData, getPdfFileName } from './index.js';
+
+import {main as PennyMain} from './penny.js';
+
+
+import fs from 'fs';
+import path from 'path';
 const app = express();
 const port = 3000;
 
@@ -21,14 +27,14 @@ app.get('/api/data/', async (req, res) => {
         if(supermarketId === '1'){
             await LidlMain();
             
-            //const lidlImages = await readJsonData('./lidlImages/lidlImages.json');
-            console.log("Sending lidl images...", lidlImages)
+            const lidlImages = await readJsonData('./lidlImages/lidlImages.json');
+            //console.log("Sending lidl images...", lidlImages)
             res.json({lidlImages});
         
         }else if(supermarketId === '2') {
             await SparMain();
-            //const sparImages = await readJsonData('./sparImages/sparImages.json');
-            console.log("Sending spar images...", sparImages)
+            const sparImages = await readJsonData('./sparImages/sparImages.json');
+            //console.log("Sending spar images...", sparImages)
             res.json({sparImages});
         }//TODO
         else{
@@ -44,3 +50,21 @@ app.get('/api/data/', async (req, res) => {
 app.listen(port, () => {
     console.log(`Node.js server running on http://localhost:${port}`);
 });
+
+
+app.get('/api/pdf/', async(req,res) => {
+    const supermarketId = req.query.supermarketId;
+
+    try{
+        if(supermarketId === '3'){
+        await PennyMain();
+
+        const pennyURL = await readJsonData('./pennyImages/pennyPDF.json');
+        res.json({pennyURL});
+    }else{
+        res.status(400).json({error: 'Unknown Id!'});
+    }
+    }catch(error){
+        res.status(500).json({error: 'Scraping failed', details: error.message});
+    }
+})

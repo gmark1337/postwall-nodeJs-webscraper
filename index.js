@@ -221,3 +221,22 @@ export async function downloadOutputImages(images, outputDir){
 export async function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export async function getPdfFileName(folder){
+    try{
+    const files = await fs.promises.readdir(folder);
+    const pdfFile = files.filter(file => file.endsWith('.pdf'));
+
+    console.log(pdfFile)
+    console.log(pdfFile[0])
+    if(pdfFile.length !== 1){
+        console.log(`Can't read pdf file`);
+        return null;
+    }
+
+    return pdfFile[0];
+    }catch(error){
+        console.log('Error reading the folder', error.message);
+        return null;
+    }
+}
