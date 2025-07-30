@@ -54,13 +54,12 @@ app.listen(port, () => {
 
 app.get('/api/pdf/', async(req,res) => {
     const supermarketId = req.query.supermarketId;
-
     try{
         if(supermarketId === '3'){
         await PennyMain();
 
         const pennyURL = await readJsonData('./pennyImages/pennyPDF.json');
-        res.json({pennyURL});
+        res.json(pennyURL);
     }else{
         res.status(400).json({error: 'Unknown Id!'});
     }

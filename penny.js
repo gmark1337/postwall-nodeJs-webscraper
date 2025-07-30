@@ -47,6 +47,13 @@ export async function main() {
 
     const {isURLSame, url} = await getNavigationLink(page,pennyURL, pennySelector, pennyJson, pennyImages);
 
+    const firstPageURL = await page.evaluate(() => {
+        const imagedata = document.querySelector('#main > div > div.ws-cms-components > section > div > div > div:nth-child(1) > div > div.ws-image.fill-width > a > picture > img');
+        return imagedata.src
+    })
+
+    //console.log(firstPageURL);
+
     let file = await readJsonData("pennyDates.json");
     const actualDate = file.split("/")[5];
     const currentFlyerDate = actualDate.slice(-2); 
@@ -60,6 +67,7 @@ export async function main() {
         
         await page.goto(url, {waitUntil:"networkidle2"} );
         await sleep(4000);
+
         
         await page.waitForSelector("#publication .bottom-toolbar-frame", {timeout: 5000});
         await page.click("#publication .bottom-toolbar-frame button[title='Download']");
@@ -72,7 +80,9 @@ export async function main() {
 
 
         const pennyJsonImages=  ({
-            actualDate: actualDate,
+            SupermarketId: "3",
+            ActualDate: actualDate,
+            FirstPageURL: firstPageURL,
             URL: pdfURL
         });
 
