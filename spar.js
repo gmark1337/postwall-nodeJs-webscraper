@@ -1,9 +1,8 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import {downloadOutputImages, fetchImages, getNavigationLink, denyCookie, sleep, readJsonData} from './index.js';
+import {getNavigationLink, sleep} from './index.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import path from 'path';
 import fs from 'fs';
 
 import {config} from './configuration/config.js';
@@ -166,4 +165,4 @@ export async function main(){
 };
 
 
-await main();
+//await main();

@@ -1,15 +1,14 @@
 import puppeteer from 'puppeteer';
-import {downloadOutputImages, fetchImages, getNavigationLink,} from './index.js';
+import {fetchImages, getNavigationLink,} from './index.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
 import fs from 'fs';
-import { json } from 'stream/consumers';
 
 import {config} from './configuration/config.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+//const __filename = fileURLToPath(import.meta.url);
+//const __dirname = dirname(__filename);
 
 
 //TODO
@@ -20,7 +19,7 @@ export async function main () {
     console.log("Started scraping lidl website....")
 
     const market = config.supermarkets[1];
-    console.log(market);
+    //console.log(market);
 
     const browser = await puppeteer.launch({
         headless : true,
@@ -73,4 +72,4 @@ export async function main () {
 
 }
 
-await main();
+//await main();

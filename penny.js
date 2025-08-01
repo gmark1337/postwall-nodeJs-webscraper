@@ -1,23 +1,20 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import {downloadOutputImages, fetchImages, getNavigationLink, denyCookie, sleep, readJsonData} from './index.js';
+import {getNavigationLink, sleep, readJsonData} from './index.js';
 import { fileURLToPath } from 'url';
-import { dirname, relative } from 'path';
-import path from 'path';
+import { dirname } from 'path';
 import fs from 'fs';
 
 
 import {config} from './configuration/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 puppeteer.use(StealthPlugin());
 
 export async function main() {
 
     const market = config.supermarkets[3];
-    console.log(market);
+    //console.log(market);
 
     const browser = await puppeteer.launch({
         headless:true,
@@ -78,4 +75,4 @@ export async function main() {
 }
     await browser.close();
 };
-await main();
+//await main();
