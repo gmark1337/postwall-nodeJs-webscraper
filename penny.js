@@ -6,6 +6,9 @@ import { dirname, relative } from 'path';
 import path from 'path';
 import fs from 'fs';
 
+
+import {config} from './configuration/config.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -13,20 +16,8 @@ puppeteer.use(StealthPlugin());
 
 export async function main() {
 
-    //TODO
-    //CHECK NEXT WEEK IF IT WORKS :))))
-
-
-    const pennyURL = "https://www.penny.hu/reklamujsag";
-    const pennySelector = "#main > div > div.ws-cms-components > section > div";
-    const pennyJson = "pennyDates.json";
-    const pennyImages = "./pennyImages";
-
-   
-
-
-    const downloadSelector = "a.download-full-button[title='Download the publication as a PDF file']";
-    const downloadImageTag = 'a.download-full-button';
+    const market = config.supermarkets[3];
+    console.log(market);
 
     const browser = await puppeteer.launch({
         headless:true,
@@ -45,23 +36,17 @@ export async function main() {
     })
 
 
-    const {isURLSame, url} = await getNavigationLink(page,pennyURL, pennySelector, pennyJson, pennyImages);
+    const {isURLSame, url} = await getNavigationLink(page,market.websiteURL, market.pennySelectorTag, market.jsonDateName, market.outputDIR);
 
-    const firstPageURL = await page.evaluate(() => {
-        const imagedata = document.querySelector('#main > div > div.ws-cms-components > section > div > div > div:nth-child(1) > div > div.ws-image.fill-width > a > picture > img');
+    const firstPageURL = await page.evaluate((selector) => {
+        const imagedata = document.querySelector(selector);
         return imagedata.src
-    })
+    }, market.firstPageSelectorTag)
 
     //console.log(firstPageURL);
 
-    let file = await readJsonData("pennyDates.json");
+    let file = await readJsonData(market.jsonDateName);
     const actualDate = file.split("/")[5];
-    const currentFlyerDate = actualDate.slice(-2); 
-
-    
-    //it gets the path to the download folder HOME is used in linux, USERPROFILE is windows, sucks to be on mac 
-    //const downloadPath = path.join(process.env.HOME || process.env.USERPROFILE, 'Downloads');
-    //const fileName = `PENNY ${currentFlyerDate}. heti reklámújság.pdf`;
     
     if(!isURLSame){
         
@@ -69,13 +54,13 @@ export async function main() {
         await sleep(4000);
 
         
-        await page.waitForSelector("#publication .bottom-toolbar-frame", {timeout: 5000});
-        await page.click("#publication .bottom-toolbar-frame button[title='Download']");
+        await page.waitForSelector(market.waitForSelectorTag, {timeout: 5000});
+        await page.click(market.clickToDownloadTag);
 
 
-        await page.waitForSelector(downloadSelector, {timeout: 5000});
-        await page.click(downloadImageTag);
-        const pdfURL = await page.$eval(downloadImageTag, el => el.href);
+        await page.waitForSelector(market.downloadSelectorTag, {timeout: 5000});
+        await page.click(market.downloadImageTag);
+        const pdfURL = await page.$eval(market.downloadImageTag, el => el.href);
         console.log("PDF URL:", pdfURL);
 
 
@@ -88,9 +73,9 @@ export async function main() {
 
         //console.log(pennyJsonImages);
 
-         await fs.writeFileSync('./pennyImages/pennyPDF.json', JSON.stringify(pennyJsonImages, null, 2), 'utf-8');
-
+         await fs.writeFileSync(market.imagePath, JSON.stringify(pennyJsonImages, null, 2), 'utf-8');
+    
 }
     await browser.close();
 };
-//await main();
+await main();

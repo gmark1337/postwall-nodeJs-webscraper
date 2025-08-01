@@ -10,21 +10,46 @@ import { readJsonData, getPdfFileName } from './index.js';
 import {main as PennyMain} from './penny.js';
 
 
+import {config } from './configuration/config.js';
+
 import fs from 'fs';
 import path from 'path';
 const app = express();
-const port = 3000;
-
-//Lidl == 1
-//Spar == 2
-//Penny == 3 TODO
 
 
 
-app.get('/api/data/', async (req, res) => {
+
+app.get(config.api_endpoint, async (req, res) => {
     const supermarketId = req.query.supermarketId;
     try {
-        if(supermarketId === '1'){
+        const market = config.supermarkets[supermarketId];
+        
+        if(!market.enabled){
+            return res.status(403).json({error: "Supermarket is currently disabled"});
+        }
+        if(!market){
+            return res.status(404).json({error: "Supermarket not found"});
+        }
+
+        if(market && market.enabled){
+            switch(supermarketId){
+                case '1':
+                    await LidlMain();
+                    break;
+                case '2':
+                    await SparMain();
+                    break;
+            }
+
+            const images = await readJsonData(market.imagePath)
+
+            res.json({images});
+        }else{
+            res.status(400).json({error: "Unknown supermarketID"});
+        }
+
+        
+        /*if(supermarketId === '1'){
             await LidlMain();
             
             const lidlImages = await readJsonData('./lidlImages/lidlImages.json');
@@ -39,7 +64,7 @@ app.get('/api/data/', async (req, res) => {
         }//TODO
         else{
             res.status(400).json({error: "Unknown supermarketId"});
-        }
+        }*/
         
     }catch(error){
         console.error(error);
@@ -47,22 +72,31 @@ app.get('/api/data/', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Node.js server running on http://localhost:${port}`);
+app.listen(config.port, () => {
+    console.log(`Node.js server running on http://localhost:${config.port}`);
 });
 
 
-app.get('/api/pdf/', async(req,res) => {
+app.get(config.pdf_api_endpoint, async(req,res) => {
     const supermarketId = req.query.supermarketId;
     try{
-        if(supermarketId === '3'){
+        const market = config.supermarkets[supermarketId];
+        if(!market.enabled){
+            return res.status(403).json({error: "Supermarket is currently disabled"});
+        }
+        if(!market){
+            return res.status(404).json({error: "Supermarket not found"});
+        }
+        
+        if(market && market.enabled){
         await PennyMain();
 
-        const pennyURL = await readJsonData('./pennyImages/pennyPDF.json');
+        const pennyURL = await readJsonData(market.imagePath);
         res.json(pennyURL);
     }else{
         res.status(400).json({error: 'Unknown Id!'});
     }
+    
     }catch(error){
         res.status(500).json({error: 'Scraping failed', details: error.message});
     }

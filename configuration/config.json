@@ -1,0 +1,30 @@
+{
+    "supermarkets":{
+        "1":{
+            "name": "Lidl",
+            "imagePath": "./lidlImages/lidlImages.json",
+            "outputDIR": "./lidlImages",
+            "enabled": true
+        },
+        "2":{
+            "name": "Spar",
+            "imagePath": "./sparImages/sparImages.json",
+            "outputDIR": "./sparImages",
+            "enabled": true
+        },
+        "3":{
+            "name": "Penny",
+            "imagePath": "./pennyImages/pennyPDF.json",
+            "outputDIR": "./pennyImages",
+            "enabled": true,
+            "websiteURL": "https://www.penny.hu/reklamujsag",
+            "pennySelectorTag": "#main > div > div.ws-cms-components > section > div",
+            "jsonDateName": "pennyDates.json",
+            "downloadSelectorTag": "a.download-full-button[title='Download the publication as a PDF file']",
+            "downloadImageTag": "a.download-full-button",
+            "firstPageSelectorTag": "#main > div > div.ws-cms-components > section > div > div > div:nth-child(1) > div > div.ws-image.fill-width > a > picture > img",
+            "waitForSelectorTag": "#publication .bottom-toolbar-frame",
+            "clickToDownloadTag": "#publication .bottom-toolbar-frame button[title='Download']"
+        }
+    }
+}

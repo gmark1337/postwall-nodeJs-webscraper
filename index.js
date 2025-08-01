@@ -11,16 +11,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-export async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder, cookieOptional = false, waitForCookieDenySelector = null, denyCookieSelector = null){
+export async function getNavigationLink(page,websiteLink,selector,jsonFile,imageFolder){
     
     await page.goto(websiteLink);
-
-    if(cookieOptional == true){
-        console.log(cookieOptional);
-        console.log(waitForCookieDenySelector);
-        console.log(denyCookieSelector);
-        denyCookie(waitForCookieDenySelector, denyCookieSelector);
-    }
 
     const valid = await page.evaluate((sel) => {
         const flyers = document.querySelectorAll(sel);
