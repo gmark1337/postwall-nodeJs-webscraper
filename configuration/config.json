@@ -4,13 +4,28 @@
             "name": "Lidl",
             "imagePath": "./lidlImages/lidlImages.json",
             "outputDIR": "./lidlImages",
-            "enabled": true
+            "enabled": true,
+            "websiteURL": "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d",
+            "siteSelectorTag": ".subcategory",
+            "jsonDateName": "lidlDate.json",
+            "waitForSelectorTag":  "#root > main > section > div.content_navigation--right",
+            "currentImage": "li.page.page--current.page--current-1",
+            "cookieDenySelectorTag": "#onetrust-banner-sdk > div > div",
+            "denyCookieTag": "#onetrust-reject-all-handler"
         },
         "2":{
             "name": "Spar",
             "imagePath": "./sparImages/sparImages.json",
             "outputDIR": "./sparImages",
-            "enabled": true
+            "enabled": true,
+            "websiteURL": "https://www.spar.hu/ajanlatok",
+            "baseURL": "https://www.spar.hu",
+            "siteSelectorTag": "#filter-5aa56c5e30 > main > div > div.flyer-container.flyer-filter.ipaper-container > section:nth-child(4) > div > div.flyer-teaser__wrapper.ipaper-teaser__wrapper.flyer-teaser__wrapper--grouped",
+            "jsonDateName": "sparDate.json",
+            "waitForSelectorTag":"#navToNext",
+            "iframeTag": "iframe",
+            "iframeSelectorTag": "iframe[src*='szorolap.spar.hu']",
+            "spreadSelectorTag": "[id^=spread-]"
         },
         "3":{
             "name": "Penny",
@@ -18,7 +33,7 @@
             "outputDIR": "./pennyImages",
             "enabled": true,
             "websiteURL": "https://www.penny.hu/reklamujsag",
-            "pennySelectorTag": "#main > div > div.ws-cms-components > section > div",
+            "siteSelectorTag": "#main > div > div.ws-cms-components > section > div",
             "jsonDateName": "pennyDates.json",
             "downloadSelectorTag": "a.download-full-button[title='Download the publication as a PDF file']",
             "downloadImageTag": "a.download-full-button",

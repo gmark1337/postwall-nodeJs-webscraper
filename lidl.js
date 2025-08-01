@@ -6,6 +6,8 @@ import path from 'path';
 import fs from 'fs';
 import { json } from 'stream/consumers';
 
+import {config} from './configuration/config.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -16,16 +18,9 @@ const __dirname = dirname(__filename);
 //Optimize the clicking mechanism?(Save 2 at a time not one by one => see {'spar.js'})
 export async function main () {
     console.log("Started scraping lidl website....")
-    //lidl
-    const lidlURL = "https://www.lidl.hu/c/szorolap/s10013623?flyx=019720a1-a92a-727e-bc6c-6241291ac69d";
-    const lidlSelector = '.subcategory';
-    const lidlJson = 'lidlDate.json';
-    const lidlImages = './lidlImages';
-    const waitRightSelector = '#root > main > section > div.content_navigation--right';
-    const currentImage = 'li.page.page--current.page--current-1';
 
-    const waitForCookieDenySelector = '#onetrust-banner-sdk > div > div';
-    const denyCookieSelector = '#onetrust-reject-all-handler';
+    const market = config.supermarkets[1];
+    console.log(market);
 
     const browser = await puppeteer.launch({
         headless : true,
@@ -40,7 +35,7 @@ export async function main () {
         height: 840
     });
 
-    const {isURLSame, url} = await getNavigationLink(page,lidlURL, lidlSelector, lidlJson,lidlImages);
+    const {isURLSame, url} = await getNavigationLink(page,market.websiteURL, market.siteSelectorTag, market.jsonDateName,market.outputDIR);
 
     const actualDate = url.split("/")[6];
     console.log(actualDate);
@@ -50,10 +45,10 @@ export async function main () {
 
     if(!isURLSame){
 
-    const images = await fetchImages(page, url,waitRightSelector, currentImage,waitForCookieDenySelector, denyCookieSelector);
+    const images = await fetchImages(page, url,market.waitForSelectorTag, market.currentImage,market.cookieDenySelectorTag, market.denyCookieTag);
 
 
-    const outputDir = path.join(__dirname, lidlImages);
+    const outputDir = path.join(__dirname, market.outputDIR);
     if(!fs.existsSync(outputDir)){
         fs.mkdirSync(outputDir);
     }
@@ -66,7 +61,7 @@ export async function main () {
     };
     //jsonImages.push(JSON.stringify(images));
     jsonImages.push(imagesWithDate);
-    await fs.writeFileSync('./lidlImages/lidlImages.json', JSON.stringify(imagesWithDate, null, 2), 'utf-8');
+    await fs.writeFileSync(market.imagePath, JSON.stringify(imagesWithDate, null, 2), 'utf-8');
 
     //jsonImages.forEach(x => console.log(x));
 ;
@@ -78,4 +73,4 @@ export async function main () {
 
 }
 
-//await main();
+await main();

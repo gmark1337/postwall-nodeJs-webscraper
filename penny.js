@@ -36,7 +36,7 @@ export async function main() {
     })
 
 
-    const {isURLSame, url} = await getNavigationLink(page,market.websiteURL, market.pennySelectorTag, market.jsonDateName, market.outputDIR);
+    const {isURLSame, url} = await getNavigationLink(page,market.websiteURL, market.siteSelectorTag, market.jsonDateName, market.outputDIR);
 
     const firstPageURL = await page.evaluate((selector) => {
         const imagedata = document.querySelector(selector);
