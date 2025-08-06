@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "supermarket_API.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node supermarket_API.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
