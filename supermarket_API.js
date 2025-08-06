@@ -14,7 +14,9 @@ import {config } from './configuration/config.js';
 
 const app = express();
 
-
+app.get('/', (req, res) => {
+    res.send('API is working!');
+})
 
 app.get(config.api_endpoint, async (req, res) => {
     const supermarketId = req.query.supermarketId;
