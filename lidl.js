@@ -46,11 +46,6 @@ export async function main () {
 
     const images = await fetchImages(page, url,market.waitForSelectorTag, market.currentImage,market.cookieDenySelectorTag, market.denyCookieTag);
 
-
-    const outputDir = path.join(__dirname, market.outputDIR);
-    if(!fs.existsSync(outputDir)){
-        fs.mkdirSync(outputDir);
-    }
     
     //await downloadOutputImages(images, lidlImages);
     

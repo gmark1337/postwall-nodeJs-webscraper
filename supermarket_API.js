@@ -13,7 +13,6 @@ import {main as PennyMain} from './penny.js';
 import {config } from './configuration/config.js';
 
 const app = express();
-0
 
 
 
