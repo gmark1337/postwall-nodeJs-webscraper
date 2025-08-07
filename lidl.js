@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import {fetchImages, getNavigationLink,} from './index.js';
+import {fetchImages, getNavigationLink,} from './app.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
