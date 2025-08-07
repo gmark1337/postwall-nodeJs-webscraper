@@ -14,6 +14,8 @@ import {config } from './configuration/config.js';
 
 const app = express();
 
+console.log('PUPPETEER_CACHE_DIR:', process.env.PUPPETEER_CACHE_DIR);
+
 app.get('/', (req, res) => {
     res.send('API is working!');
 })
