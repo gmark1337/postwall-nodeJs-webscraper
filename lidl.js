@@ -22,6 +22,7 @@ export async function main () {
     //console.log(market);
 
     const browser = await puppeteer.launch({
+        executablePath: process.env.CHROMIUM_PATH ||undefined,
         headless : true,
         defaultViewport : false,
         //userDataDir: './tmp'

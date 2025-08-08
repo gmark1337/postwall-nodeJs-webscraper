@@ -49,6 +49,7 @@ export async function main(){
     const market = config.supermarkets[2];
     
     const browser = await puppeteer.launch({
+        executablePath: process.env.CHROMIUM_PATH ||undefined,
         headless: true,
         defaultViewport: false,
     })
