@@ -69,8 +69,8 @@ export async function fetchImages(pageOrFrame,relativeURL,waitRightSelector, cur
         console.warn("Skipping .goto(): not a Page object.");
     }
 
-    await sleep(400);
-    await denyCookie(pageOrFrame, waitForCookieDenySelector, denyCookieSelector);
+    //await sleep(400);
+    //await denyCookie(pageOrFrame, waitForCookieDenySelector, denyCookieSelector);
     await sleep(400);
 
 

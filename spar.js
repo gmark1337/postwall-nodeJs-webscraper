@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import {getNavigationLink, sleep} from './app.js';
+import {getNavigationLink, sleep, downloadOutputImages} from './app.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
@@ -49,7 +49,6 @@ export async function main(){
     const market = config.supermarkets[2];
     
     const browser = await puppeteer.launch({
-        executablePath: process.env.CHROMIUM_PATH ||undefined,
         headless: true,
         defaultViewport: false,
     })
@@ -127,10 +126,18 @@ export async function main(){
             url
         }));
 
-        imagesWithIndex.forEach(x => console.log(x));
+        //for(var images in allImagesURL){
+        //    console.log(images)
+            //await downloadImage(images, "test_file_name", './test_files');
+        //}
+
+        //await downloadOutputImages(imagesWithIndex, "./test_files");
+
+        //imagesWithIndex.forEach(x => console.log(x));
 
         const jsonImages = {
             actualDate: actualDate,
+            serviceType: "saveToCloudFlare",
             pages: imagesWithIndex
         };
 

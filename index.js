@@ -9,16 +9,17 @@ import { readJsonData } from './app.js';
 
 import {main as PennyMain} from './penny.js';
 
+import {main as TescoMain} from './tesco.js';
+
 
 import {config } from './configuration/config.js';
 
 const app = express();
 
-console.log('PUPPETEER_CACHE_DIR:', process.env.PUPPETEER_CACHE_DIR);
-
-app.get('/', (req, res) => {
-    res.send('API is working!');
+app.get('/',(req,res) => {
+    return res.send("Hello");
 })
+
 
 app.get(config.api_endpoint, async (req, res) => {
     const supermarketId = req.query.supermarketId;
@@ -46,6 +47,9 @@ app.get(config.api_endpoint, async (req, res) => {
                     break;
                 case '2':
                     await SparMain();
+                    break;
+                case '4':
+                    await TescoMain();
                     break;
             }
 

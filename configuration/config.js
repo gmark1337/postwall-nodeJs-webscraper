@@ -7,7 +7,7 @@ const configJSON = JSON.parse(fs.readFileSync('./configuration/config.json', 'ut
 
 
 export const config = {
-    port: process.env.PORT || 3000,
+    port: process.env.PORT,
     api_endpoint: process.env.API_ENDPOINT,
     pdf_api_endpoint: process.env.PDF_API_ENDPOINT,
     supermarkets: configJSON.supermarkets,
