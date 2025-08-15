@@ -56,6 +56,21 @@
             "clickNextSelectorTag": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-button-next",
             "disabledClick": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-button-next.swiper-button-disabled",
             "currentImage": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-wrapper > div.swiper-slide.swiper-slide-visible.swiper-slide-fully-visible.sc-f5251587-2.sc-f5251587-3.cuUbCv.kFkdpz > div > div > div > div"
+        },
+        "5":{
+            "name":"Aldi",
+            "imagePath":"./aldiImages/aldiImages.json",
+            "outputDIR":"./aldiImages",
+            "enabled":true,
+            "type": "imageURL",
+            "websiteURL":"https://www.aldi.hu/hu/ajanlatok/online-akcios-ujsag.html?utm_source=google&utm_medium=cpc&utm_campaign=aldi_hu_search_szorolap_brand&gad_source=1",
+            "jsonDateName":"./aldiDate.json",
+            "siteSelectorTag": "body > div.sidebar-wrapper > main > div:nth-child(6)",
+            "clickNextSelectorTag": "#next_slide",
+            "currentImage":"#slider > div > div.slide.reader-view.current > div.content.zoomable-in > div",
+            "disabledClick":".navButton.disabled",
+            "cookieDenySelectorTag":"#onetrust-button-group > div",
+            "denyCookieTag": "#onetrust-reject-all-handler"
         }
     }
 }

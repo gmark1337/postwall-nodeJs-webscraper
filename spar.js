@@ -166,7 +166,7 @@ export async function main(){
         await fs.writeFileSync(market.imagePath, JSON.stringify(jsonImages, null, 2), 'utf-8');
 
     } else{
-        console.log("The images are already downloaded!")
+        console.log("The images are already fetched!")
     }
 
     await browser.close(); 

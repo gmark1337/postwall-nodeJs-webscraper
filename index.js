@@ -11,6 +11,8 @@ import {main as PennyMain} from './penny.js';
 
 import {main as TescoMain} from './tesco.js';
 
+import {main as AldiMain} from './aldi.js';
+
 
 import {config } from './configuration/config.js';
 
@@ -51,7 +53,10 @@ app.get(config.api_endpoint, async (req, res) => {
                 case '4':
                     await TescoMain();
                     break;
-            }
+                case '5':
+                    await AldiMain();
+                    break;
+            };
 
             const images = await readJsonData(market.imagePath)
 
