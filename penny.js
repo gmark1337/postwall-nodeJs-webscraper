@@ -72,8 +72,9 @@ export async function main() {
         //console.log(pennyJsonImages);
 
          await fs.writeFileSync(market.imagePath, JSON.stringify(pennyJsonImages, null, 2), 'utf-8');
-    
-}
+    }else{
+        console.log("Penny website is already fetched!");
+    };
     await browser.close();
 };
 //await main();

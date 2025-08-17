@@ -71,6 +71,21 @@
             "disabledClick":".navButton.disabled",
             "cookieDenySelectorTag":"#onetrust-button-group > div",
             "denyCookieTag": "#onetrust-reject-all-handler"
+        },
+        "6":{
+            "name":"Auchan",
+            "imagePath":"./auchanImages/auchanImages.json",
+            "outputDIR":"./auchanImages",
+            "enabled":true,
+            "type":"imagePDF",
+            "websiteURL":"https://auchan.hu/catalog",
+            "baseURL":"https://auchan.hu/catalog",
+            "jsonDateName":"./auchanDate.json",
+            "siteSelectorTag":"#aw-v-0-0-0-1-0-0-0-tabpanel-0 > div",
+            "cookieDenySelectorTag":"#onetrust-banner-sdk > div > div.banner-content > div.ot-sdk-container",
+            "pdfSelectorTag": "#container > div > div > div > div > div > div:nth-child(3)",
+            "firstPageURLSelectorTag":"#aw-v-0-0-0-1-0-0-0-tabpanel-0 > div > div > div > div.JDl6c5BM"
+            
         }
     }
 }

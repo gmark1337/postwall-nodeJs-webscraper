@@ -13,6 +13,8 @@ import {main as TescoMain} from './tesco.js';
 
 import {main as AldiMain} from './aldi.js';
 
+import {main as AuchanMain} from './auchan.js';
+
 
 import {config } from './configuration/config.js';
 
@@ -87,11 +89,17 @@ app.get(config.pdf_api_endpoint, async(req,res) => {
         return res.status(400).json({error: "This supermarket only supports PDF requests"});
         }
     try{
+        switch (supermarketId){
+            case '3':
+                await PennyMain();
+                break;
+            case '6':
+                await AuchanMain();
+                break;
+        };
         
-        await PennyMain();
-
-        const pennyURL = await readJsonData(market.imagePath);
-        res.json(pennyURL);
+        const images = await readJsonData(market.imagePath);
+        res.json(images);
     }catch(error){
         res.status(500).json({error: 'Scraping failed', details: error.message});
     }
