@@ -8,6 +8,8 @@ import fs from 'fs';
 
 import {config} from './configuration/config.js';
 
+import { getFirstImageLink } from "./imageFetchLib.js";
+
 const __filename = fileURLToPath(import.meta.url);
 puppeteer.use(StealthPlugin());
 
@@ -35,11 +37,10 @@ export async function main() {
 
 
     const {isURLSame, url} = await getNavigationLink(page,market.websiteURL, market.siteSelectorTag, market.jsonDateName, market.outputDIR);
-
-    const firstPageURL = await page.evaluate((selector) => {
-        const imagedata = document.querySelector(selector);
-        return imagedata.src
-    }, market.firstPageSelectorTag)
+    await sleep(500);
+    console.log(market.firstPageSelectorTag);
+    const firstPageURL = await getFirstImageLink(page, market.firstPageSelectorTag);
+    console.log(firstPageURL);
 
     //console.log(firstPageURL);
 

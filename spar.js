@@ -81,7 +81,7 @@ export async function main(){
 
         await sleep(4000);
 
-        let allImagesURL = [];
+        let tempImageArray = [];
 
 
         while(true){
@@ -96,9 +96,9 @@ export async function main(){
             }, market.spreadSelectorTag);
 
             await sleep(100);
-            //console.log("Found images:", imagesURL);
+            console.log("Found images:", imagesURL);
             console.log("Success saving the images");
-            allImagesURL.push(imagesURL);
+            tempImageArray.push(imagesURL);
 
             const reachedEnd = await clickNextNumberNthTimes(frame, market.waitForSelectorTag, 5);
             
@@ -114,13 +114,13 @@ export async function main(){
                     }).filter(src => src !== null);
                 }, market.spreadSelectorTag);
                 //console.log("Final images found:", finalImages);
-                allImagesURL.push(finalImages);
+                tempImageArray.push(finalImages);
                 break;
             }
             
             
         };
-        const imagesFlated = allImagesURL.flat();
+        const imagesFlated = tempImageArray.flat().filter(page => !page.includes("files.cdn.ipaper.io"));
         const imagesWithIndex = imagesFlated.map((url, index) => ({
             pageIndex: index + 1,
             url
@@ -140,6 +140,9 @@ export async function main(){
             serviceType: "saveToCloudFlare",
             pages: imagesWithIndex
         };
+
+
+        //jsonImages.pages = jsonImages.pages.filter((page) => !page.url.includes("files.cdn.ipaper.io"));
 
         /* for(let i = 0; i < imagesFlated.length; i++){
                 const url = imagesFlated[i];

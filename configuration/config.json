@@ -53,9 +53,9 @@
             "websiteURL": "https://www.tesco.hu/akciok/katalogusok",
             "siteSelectorTag": "#__next > div > div.base-components__RootElement-sc-150pv2j-1.styled-sc-5ny0fy-0.cDPGtN.gsoMVG.sc-d6a19de6-0.gLgcba.ddsweb-grid__container > div:nth-child(2) > div > div:nth-child(1) > div > div:nth-child(1)",
             "jsonDateName": "./data/dates/tesco/tescoDate.json",
-            "clickNextSelectorTag": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-button-next",
-            "disabledClick": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-button-next.swiper-button-disabled",
-            "currentImage": "#__next > div > div > div.sc-f5251587-0.isRKeK > div > div.swiper-wrapper > div.swiper-slide.swiper-slide-visible.swiper-slide-fully-visible.sc-f5251587-2.sc-f5251587-3.cuUbCv.kFkdpz > div > div > div > div"
+            "clickNextSelectorTag": ".swiper-button-next",
+            "disabledClick": ".swiper-button-next.swiper-button-disabled",
+            "currentImage": ".leaflet-image-container"
         },
         "5":{
             "name":"Aldi",

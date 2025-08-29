@@ -4,6 +4,7 @@ import {getNavigationLink, fetchImages, sleep} from './app.js'
 import fs from 'fs';
 
 import {config} from './configuration/config.js';
+import { clickNextButtonNthTimes, getImageURL, getMultipleImagesIntoArrays, isDisabledButtonActive } from "./imageFetchLib.js";
 
 
 puppeteer.use(StealthPlugin());
@@ -43,41 +44,21 @@ export async function main(){
     const tempURLs = [];
     
     while(true){
-        //await page.waitForSelector(market.clickNextSelectorTag);
-        console.log(`Currently on page ${pageIndex}`)
-        const images = await page.evaluate((image) => {
-                    const element = document.querySelector(image);
+            tempURLs.push(await getMultipleImagesIntoArrays(page, market.currentImage));
 
-                    if(!element){
-                        return null;
-                    }
-
-                    const img = element.querySelector('img');
-                    const result = img? img.src : 'NoImageFound';
-                    return result;
-            }, market.currentImage);
-
-            if(images){
-                tempURLs.push({pageIndex, url: images});
-            }else{
-                 console.log(`Image not found on ${pageIndex}. page.`);
-            }
-
-            const isDisabledAlive = await page.evaluate((selector) => {
-                const el = document.querySelector(selector);
-                return el !== null;
-                }, market.disabledClick);
-            if(isDisabledAlive){
-                console.log('No more pages!');
-                break;
-            }
+            await sleep(500);
         try{
             
-
-            await page.click(market.clickNextSelectorTag);
+            const isDisabled = await isDisabledButtonActive(page, market.disabledClick);
+            //await page.click(market.clickNextSelectorTag);
+            const reachedEnd = await clickNextButtonNthTimes(page, market.clickNextSelectorTag, 3, isDisabled);
+            if(reachedEnd){
+                console.log('No more pages!Breaking loop....');
+                break;
+            }
             pageIndex++;
             
-            await sleep(200);
+            await sleep(500);
             
         }catch(err){
             console.log("Sudden error occurred: ", err.message);
@@ -85,13 +66,26 @@ export async function main(){
         }
     }
 
+    const imagesFlatted = tempURLs.flat().map((url, index) => [{
+        pageIndex: index + 1,
+        url
+    }]);
+    //imagesFlatted.forEach(x => console.log(x));
+    const validation = /\.(\d+)\.jpeg/;
+    const filtered = imagesFlatted.flat().filter((({pageIndex, url}) => {
+        const match = url.match(validation)
+        if(!match){
+            return false;
+        }
+        const numberInMatch = parseInt(match[1],10);
+        return pageIndex === numberInMatch;
+    }));
+
     const imagesWithDate = {
         actualDate: actualDate,
         serviceType: "saveToCloudFlare",
-        pages: tempURLs
+        pages: filtered
     };
-
-    console.log(imagesWithDate);
 
     await fs.writeFileSync(market.imagePath, JSON.stringify(imagesWithDate, null, 2), 'utf-8');
     }else{

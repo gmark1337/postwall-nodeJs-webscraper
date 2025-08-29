@@ -5,6 +5,7 @@ import { getNavigationLink, sleep, denyCookie } from './app.js';
 import {config} from './configuration/config.js';
 
 import fs from 'fs';
+import { getMultipleImagesIntoArrays, isDisabledButtonActive } from './imageFetchLib.js';
 
 puppeteer.use(StealthPlugin());
 
@@ -37,28 +38,10 @@ export async function main(){
     while(true){
         await sleep(500);
         console.log(`Currently on page ${pageIndex}`)
-        const fetchImagesResult = await page.evaluate((selector) => {
-            const elements = Array.from(document.querySelectorAll(selector));
+        
+        fetchedImages.push(await getMultipleImagesIntoArrays(page, market.currentImage)); 
 
-            return elements.flatMap(div => {
-                const imgs = div.querySelectorAll('img');
-                return Array.from(imgs)
-                .map(img => img.src)
-                .filter(src => src);
-            }).filter(src => src !== null);
-        },market.currentImage);
-        //console.log(fetchImagesResult);
-
-        if(fetchImagesResult){
-            fetchedImages.push(fetchImagesResult)
-        }
-
-        const isDisabledButtonActive = await page.evaluate((selector) =>{
-            const element = document.querySelector(selector);
-            return element !== null;
-        }, market.disabledClick);
-
-        if(isDisabledButtonActive && pageIndex !== 1){
+        if(await isDisabledButtonActive(page, market.disabledClick) && pageIndex !== 1){
             console.log("The disabled button is active, breaking cycle...");
             break;
         }
@@ -68,11 +51,15 @@ export async function main(){
             pageIndex++;
             await sleep(500);
         }catch(err){
-            console.log("Sudden error  occured: ", err.message);
+            console.log("Sudden error  occurred: ", err.message);
             break;
         }
         }
-        const imagesFlatted = fetchedImages.flat().map((url, index) => ({
+
+        //fetchedImages.forEach(x => console.log(x));
+        //const filteredImages = fetchedImages.flat().filter(page => !page.includes("data:image"));
+        //console.log(filteredImages);
+        const imagesFlatted = fetchedImages.flat().filter(page => !page.includes("data:image")).map((url, index) => ({
             pageIndex: index + 1,
             url
         }))
@@ -83,7 +70,9 @@ export async function main(){
             pages: imagesFlatted
         };
 
-        console.log(jsonImages);
+        //jsonImages.pages = jsonImages.pages.filter((page) => !page.url.includes("data:image"));
+
+        //console.log(jsonImages);
 
         await fs.writeFileSync(market.imagePath, JSON.stringify(jsonImages, null, 2), 'utf-8');
     }else{

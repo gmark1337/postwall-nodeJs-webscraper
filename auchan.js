@@ -3,6 +3,7 @@ import {sleep, getNavigationLink, denyCookie} from './app.js';
 
 import {config} from './configuration/config.js';
 import fs from 'fs';
+import { getFirstImageLink, getPdfURL } from './imageFetchLib.js';
 
 
 //The cookie is embedded within the HTML, so it's easier to block it then accept it
@@ -29,16 +30,7 @@ export async function main() {
 
     if(!isURLSame){
     await sleep(1000);
-
-    const firstPageURL = await page.evaluate((selector) => {
-        const element =  document.querySelector(selector).querySelector('img').src;
-        if(element !== null){
-            return element;
-        }else{
-            console.log("Failed to fetch the first page of the URL");
-            return null;
-        };
-    }, market.firstPageURLSelectorTag);
+    const firstPageURL = await getFirstImageLink(page, market.firstPageURLSelectorTag);
     console.log(firstPageURL);
     
     //console.log(url);
@@ -61,18 +53,7 @@ export async function main() {
         }
     });
 
-    const pdfURL = await page.evaluate((selector) => {
-        const websiteURL = document.querySelector(selector).querySelector('a').href;
-
-        if(websiteURL !== null){
-            return websiteURL;
-        }else{
-            console.log("Failed to fetch PDF URL!");
-            return null;
-        };
-
-    },market.pdfSelectorTag);
-
+    const pdfURL = await getPdfURL(page, market.pdfSelectorTag);
 
     const jsonPDF = ({ 
         SupermarketId: "6",
